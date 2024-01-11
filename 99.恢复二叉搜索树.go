@@ -1,5 +1,7 @@
 package main
 
+import "math"
+
 /*
  * @lc app=leetcode.cn id=99 lang=golang
  *
@@ -16,33 +18,31 @@ package main
  * }
  */
 func recoverTree(root *TreeNode) {
-	nodeList := []*TreeNode{}
+	var first *TreeNode
+	var second *TreeNode
+	var preNode = &TreeNode{Val: math.MinInt}
+
 	var travese func(node *TreeNode)
 	travese = func(node *TreeNode) {
 		if node == nil {
 			return
 		}
 		travese(node.Left)
-		nodeList = append(nodeList, node)
+
+		if preNode.Val > node.Val {
+			if first == nil {
+				first = preNode
+			}
+			second = node
+		}
+
+		preNode = node
+
 		travese(node.Right)
 	}
 	travese(root)
 
-	var first *TreeNode = nil
-	var second *TreeNode = nil
-
-	for i := 0; i < len(nodeList)-1; i++ {
-		if nodeList[i].Val > nodeList[i+1].Val {
-			if first == nil {
-				first = nodeList[i]
-			}
-			second = nodeList[i+1]
-		}
-	}
-
-	val := first.Val
-	first.Val = second.Val
-	second.Val = val
+	first.Val, second.Val = second.Val, first.Val
 }
 
 // @lc code=end
